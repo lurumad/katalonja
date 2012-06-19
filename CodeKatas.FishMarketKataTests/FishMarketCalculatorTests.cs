@@ -8,8 +8,15 @@ namespace CodeKatas.FishMarketKataTests
     [TestFixture]
     public class MarketCalculatorTests
     {
+        private readonly Dictionary<string, decimal[]> _priceMarkets = new Dictionary<string, decimal[]>
+        {
+            {"Madrid", new decimal[]{500, 0, 450}},
+            {"Barcelona", new decimal[]{450, 120, 0}}, 
+            {"Lisbon", new decimal[]{600, 100, 500}}, 
+        };
+
         [Test]
-        public void Can_Create_Truck()
+        public void CanCreateTruck()
         {
             var truck = new Truck(200);
 
@@ -17,7 +24,7 @@ namespace CodeKatas.FishMarketKataTests
         }
 
         [Test]
-        public void When_Add_Merchandise_To_The_Truck_AvailableHeight_Decrease()
+        public void WhenAddMerchandiseToTheTruckAvailableHeightDecrease()
         {
             var truck = new Truck(200);
             var merchandise = new Merchandise(Selfish.Vieiras, 50);
@@ -27,7 +34,7 @@ namespace CodeKatas.FishMarketKataTests
         }
 
         [Test]
-        public void When_Add_Merchandise_To_The_Truck_And_Exceded_MaximunHeight_Expect_Exception()
+        public void WhenAddMerchandiseToTheTruckAndExcededMaximunHeightExpectException()
         {
             var truck = new Truck(200);
             var merchandise = new Merchandise(Selfish.Vieiras, 500);
@@ -36,7 +43,7 @@ namespace CodeKatas.FishMarketKataTests
         }
 
         [Test]
-        public void Can_Create_Market()
+        public void CanCreateMarket()
         {
             var priceMarkets = new List<PriceMarket>
                                    {
@@ -50,7 +57,7 @@ namespace CodeKatas.FishMarketKataTests
         }
 
         [Test]
-        public void Can_Create_MarketCalculator()
+        public void CanCreateMarketCalculator()
         {
             var fishMarkets = new List<FishMarket>();
             var truck = new Truck(200);
@@ -60,40 +67,14 @@ namespace CodeKatas.FishMarketKataTests
         }
 
         [Test]
-        public void When_Call_Calculate_Expects_Returns_The_Best_FishMarket_For_Sell_Merchandise()
+        public void WhenCallCalculateExpectsReturnsTheBestFishMarketForSellMerchandise()
         {
-            var markets = new List<FishMarket>();
-
-            var madridPriceMarkets = new List<PriceMarket>
-                                   {
-                                       new PriceMarket(Selfish.Vieiras, 500),
-                                       new PriceMarket(Selfish.Pulpo, 0),
-                                       new PriceMarket(Selfish.Centollo, 450)
-                                   };
-
-            var madridFishMarket = new FishMarket("Madrid", 800, madridPriceMarkets);
-
-            var barcelonaPriceMarkets = new List<PriceMarket>
-                                   {
-                                       new PriceMarket(Selfish.Vieiras, 450),
-                                       new PriceMarket(Selfish.Pulpo, 120),
-                                       new PriceMarket(Selfish.Centollo, 0)
-                                   };
-
-            var barcelonaFishMarket = new FishMarket("Barcelona", 1100, barcelonaPriceMarkets);
-
-            var lisbonPriceMarkets = new List<PriceMarket>
-                                   {
-                                       new PriceMarket(Selfish.Vieiras, 600),
-                                       new PriceMarket(Selfish.Pulpo, 100),
-                                       new PriceMarket(Selfish.Centollo, 500)
-                                   };
-
-            var lisbonFishMarket = new FishMarket("Lisbon", 600, lisbonPriceMarkets);
-
-            markets.Add(madridFishMarket);
-            markets.Add(barcelonaFishMarket);
-            markets.Add(lisbonFishMarket);
+            var markets = new List<FishMarket>
+                              {
+                                  GetFishMarket("Madrid", 800),
+                                  GetFishMarket("Barcelona", 1100),
+                                  GetFishMarket("Lisbon", 600)
+                              };
 
             var truck = new Truck(200);
             truck.AddMerchandise(new Merchandise(Selfish.Vieiras, 50));
@@ -101,10 +82,21 @@ namespace CodeKatas.FishMarketKataTests
             truck.AddMerchandise(new Merchandise(Selfish.Centollo, 50));
 
             var fishMarketCalculator = new FishMarketCalculator(truck, markets);
-
             var bestFishMarket = fishMarketCalculator.Calculate();
 
             Assert.AreEqual("Lisbon", bestFishMarket.CityName);
+        }
+
+        private FishMarket GetFishMarket(string name, int distanceInKilometers)
+        {
+            var madridPriceMarkets = new List<PriceMarket>
+                                         {
+                                             new PriceMarket(Selfish.Vieiras, _priceMarkets[name][0]),
+                                             new PriceMarket(Selfish.Pulpo, _priceMarkets[name][1]),
+                                             new PriceMarket(Selfish.Centollo, _priceMarkets[name][2])
+                                         };
+
+            return new FishMarket(name, distanceInKilometers, madridPriceMarkets);
         }
     }
 }
