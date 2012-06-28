@@ -19,8 +19,7 @@ namespace CodeKatas.FishMarketKata
 
         public FishMarket Calculate()
         {
-            decimal lastPrice = 0;
-            FishMarket bestMarket = null;
+            var fishMarkets = new Dictionary<FishMarket, decimal>();
 
             foreach (var market in Markets)
             {
@@ -29,15 +28,10 @@ namespace CodeKatas.FishMarketKata
                 var depreciatedPercent = GetDepreciatedPercent(market);
                 totalPrice -= (totalPrice * depreciatedPercent) / 100;
                 totalPrice -= market.DistanceInKilometer * EurosPerKilometer;
-
-                if (totalPrice <= lastPrice) 
-                    continue;
-
-                lastPrice = totalPrice;
-                bestMarket = market;
+                fishMarkets.Add(market, totalPrice);
             }
 
-            return bestMarket;
+            return fishMarkets.First(kpv => kpv.Value == fishMarkets.Max(m => m.Value)).Key;
         }
 
         private int GetDepreciatedPercent(FishMarket fishMarket)
