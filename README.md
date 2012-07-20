@@ -1,4 +1,4 @@
-FishMarketKata
+KataLonja
 ==============
 
 KataLonja in C# using TDD with nUnit
